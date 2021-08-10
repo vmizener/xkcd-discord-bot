@@ -50,6 +50,10 @@ async def search(ctx, args):
         ]
     )
     embed.add_field(name="Similar Results", value=other_results)
+    embed.add_field(
+        name="Bot Info",
+        value="- [Github](https://github.com/vmizener/xkcd-discord-bot)",
+    )
     with tempfile.NamedTemporaryFile() as fp:
         img = requests.get(top_result["image"], stream=True)
         img.raw.decode_content = True
