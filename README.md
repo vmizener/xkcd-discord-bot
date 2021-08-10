@@ -9,6 +9,7 @@ Requires the `BOT_TOKEN` environment variable corresponding to your discord bot 
 
 ### TODO
 - Add a getter for specific strips
+- Help dialog
 - Unit tests
 - Reaction controls?
 - Dockerfile?
