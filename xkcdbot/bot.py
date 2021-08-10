@@ -2,6 +2,8 @@ import datetime
 import discord
 import logging
 import requests
+import shutil
+import tempfile
 
 from discord.ext import commands
 from .config import BOT_DESCRIPTION, COMMAND_PREFIX
@@ -22,12 +24,26 @@ async def search(ctx, args):
     data = resp.json()
     if not data["success"]:
         log.error("err2")
-    top_result = data["results"][0]
+    results = data["results"]
+    top_result = results[0]
     embed.title = top_result["title"]
     embed.description = top_result["titletext"]
     embed.timestamp = datetime.datetime.strptime(
         top_result["date"], "%Y-%m-%d"
     )
-    embed.set_image(url=top_result["image"])
-    embed.set_footer(text=top_result["url"])
-    await ctx.send(embed=embed)
+    embed.set_footer(text=f"https://{top_result['url']}")
+    other_results = "\n".join(
+        [
+            f"- [{result['title']}](https://{result['url']})"
+            for result in results[1:6]
+        ]
+    )
+    embed.add_field(name="Similar Results", value=other_results)
+    with tempfile.NamedTemporaryFile() as fp:
+        img = requests.get(top_result["image"], stream=True)
+        img.raw.decode_content = True
+        shutil.copyfileobj(img.raw, fp)
+        await ctx.send(
+            file=discord.File(fp.name, filename=top_result["image"]),
+            embed=embed,
+        )
