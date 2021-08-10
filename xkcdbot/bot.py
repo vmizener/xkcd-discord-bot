@@ -39,12 +39,13 @@ async def search(ctx, args):
         return
     top_result = results[0]
     log.info(f"[{top_result['title']}]({top_result['url']})")
-    embed.title = top_result["title"]
-    embed.description = top_result["titletext"]
+    embed.title = f"{top_result['number']}: {top_result['title']}"
+    embed.description = (
+        f"[{top_result['titletext']}](https://{top_result['url']})"
+    )
     embed.timestamp = datetime.datetime.strptime(
         top_result["date"], "%Y-%m-%d"
     )
-    embed.set_footer(text=f"https://{top_result['url']}")
     if len(results) > 1:
         other_results = "\n".join(
             [
