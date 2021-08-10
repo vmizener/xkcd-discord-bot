@@ -8,6 +8,8 @@ import tempfile
 from discord.ext import commands
 from .config import BOT_DESCRIPTION, COMMAND_PREFIX
 
+INFO_RELEVANT_XKCD = "https://relevant-xkcd.github.io"
+INFO_GITHUB = "https://github.com/vmizener/xkcd-discord-bot"
 RELEVANT_XKCD_URL = "https://relevant-xkcd-backend.herokuapp.com/search"
 
 logging.basicConfig()
@@ -43,16 +45,17 @@ async def search(ctx, args):
         top_result["date"], "%Y-%m-%d"
     )
     embed.set_footer(text=f"https://{top_result['url']}")
-    other_results = "\n".join(
-        [
-            f"- [{result['title']}](https://{result['url']})"
-            for result in results[1:6]
-        ]
-    )
-    embed.add_field(name="Similar Results", value=other_results)
+    if len(results) > 1:
+        other_results = "\n".join(
+            [
+                f"- [{result['title']}](https://{result['url']})"
+                for result in results[1:6]
+            ]
+        )
+        embed.add_field(name="Similar Results", value=other_results)
     embed.add_field(
         name="Bot Info",
-        value="- [Github](https://github.com/vmizener/xkcd-discord-bot)",
+        value=f"- [Relevant-XKCD]({INFO_RELEVANT_XKCD})\n- [Github]({INFO_GITHUB})",
     )
     with tempfile.NamedTemporaryFile() as fp:
         img = requests.get(top_result["image"], stream=True)
